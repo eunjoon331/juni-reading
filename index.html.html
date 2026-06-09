@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<!-- saved from url=(0102)file:///C:/Users/eunjo/Downloads/%EC%A3%BC%EB%8B%88%EC%8C%A4_%EB%8F%85%ED%95%B4%ED%9B%88%EB%A0%A8.html -->
+<html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>주니쌤 독해 훈련</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="./주니쌤 독해 훈련_files/css2" rel="stylesheet">
+<style>
+:root {
+  --orange: #E8820A;
+  --orange-dark: #B35A00;
+  --orange-light: #FFF8F0;
+  --orange-border: #F5D4A8;
+  --red: #C0392B;
+  --red-light: #FEF5F5;
+  --red-border: #F5C6C0;
+  --green: #2E7D32;
+  --green-light: #E8F5E9;
+  --text: #1C1917;
+  --text-muted: #78716C;
+  --bg: #FAFAF9;
+  --surface: #FFFFFF;
+  --border: #E7E5E4;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; background: var(--bg); font-family: 'Noto Sans KR', sans-serif; color: var(--text); }
+
+/* Layout */
+.app { display: flex; flex-direction: column; height: 100vh; max-width: 480px; margin: 0 auto; }
+.topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 16px 10px; flex-shrink: 0; }
+.topbar-logo { font-size: 13px; color: var(--orange); font-weight: 700; letter-spacing: .04em; }
+.topbar-title { font-size: 17px; font-weight: 700; color: var(--text); margin-top: 2px; }
+.content { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 80px; }
+.bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--surface); border-top: 1px solid var(--border); display: flex; z-index: 100; }
+.nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 4px 12px; font-size: 10px; color: var(--text-muted); gap: 4px; cursor: pointer; border: none; background: none; font-family: inherit; transition: color .15s; }
+.nav-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.nav-btn.on { color: var(--orange); }
+
+/* Screens */
+.screen { display: none; }
+.screen.on { display: block; }
+
+/* Cards */
+.card { background: var(--surface); border-radius: 12px; border: 1px solid var(--border); padding: 16px; margin-bottom: 12px; }
+.card-label { font-size: 11px; font-weight: 700; color: var(--orange); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+.card-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.card-sub { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+/* Passage */
+.passage { background: var(--orange-light); border: 1px solid var(--orange-border); border-radius: 10px; padding: 14px; font-size: 14px; line-height: 1.85; color: var(--text); margin-bottom: 14px; }
+.passage .num { display: inline-block; background: var(--orange); color: #fff; font-size: 10px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; text-align: center; line-height: 18px; margin-right: 4px; flex-shrink: 0; }
+
+/* Tag rows */
+.tag-section { margin-bottom: 6px; }
+.tag-row { padding: 10px 0; border-bottom: 1px solid var(--border); }
+.tag-row:last-child { border-bottom: none; }
+.tag-sent { font-size: 13px; color: var(--text); line-height: 1.65; margin-bottom: 8px; }
+.tag-sent .snum { font-size: 11px; font-weight: 700; color: var(--orange); margin-right: 4px; }
+.tag-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 12px; padding: 5px 12px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-muted); cursor: pointer; transition: all .12s; font-family: inherit; font-weight: 500; }
+.chip:active { transform: scale(.96); }
+.chip.sel { background: var(--orange); border-color: var(--orange); color: #fff; }
+.chip.correct { background: var(--green-light); border-color: var(--green); color: var(--green); }
+.chip.wrong { background: var(--red-light); border-color: var(--red); color: var(--red); }
+
+/* Tip box */
+.tip { background: var(--orange-light); border-left: 3px solid var(--orange); border-radius: 0 8px 8px 0; padding: 10px 12px; font-size: 13px; color: var(--orange-dark); line-height: 1.65; margin-bottom: 14px; }
+.tip strong { font-weight: 700; }
+
+/* Feedback */
+.feedback { border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.65; margin-top: 14px; display: none; }
+.feedback.ok { background: var(--green-light); border: 1px solid #A5D6A7; color: var(--green); }
+.feedback.ng { background: var(--orange-light); border: 1px solid var(--orange-border); color: var(--orange-dark); }
+
+/* Progress */
+.progress-bar { height: 4px; background: var(--border); border-radius: 2px; margin-bottom: 16px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--orange); border-radius: 2px; transition: width .3s; }
+.progress-text { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+
+/* Map inputs */
+.map-field { margin-bottom: 14px; }
+.map-field label { font-size: 12px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px; }
+.map-input { width: 100%; border: none; border-bottom: 2px solid var(--border); background: transparent; font-size: 14px; color: var(--text); padding: 6px 0; outline: none; font-family: inherit; transition: border-color .15s; }
+.map-input:focus { border-bottom-color: var(--orange); }
+.map-input::placeholder { color: var(--border); }
+.map-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.map-grid .map-field { margin-bottom: 0; }
+.pattern-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.pattern-chip { font-size: 12px; padding: 6px 12px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-muted); cursor: pointer; transition: all .12s; font-family: inherit; }
+.pattern-chip.sel { background: var(--orange); border-color: var(--orange); color: #fff; }
+
+/* Flow steps */
+.flow { display: flex; flex-direction: column; gap: 0; margin: 10px 0; }
+.flow-step { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 8px; margin-bottom: 4px; }
+.flow-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--orange-border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--orange); flex-shrink: 0; margin-top: 1px; }
+.flow-content { flex: 1; }
+.flow-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-bottom: 3px; }
+.badge-main { background: var(--orange); color: #fff; }
+.badge-sub { background: var(--border); color: var(--text-muted); }
+.badge-ex { background: #E8F4FD; color: #1565C0; }
+.badge-concl { background: var(--red-light); color: var(--red); border: 1px solid var(--red-border); }
+.flow-text { font-size: 13px; color: var(--text); line-height: 1.6; }
+.flow-text em { font-style: normal; font-weight: 700; color: var(--orange); }
+
+/* Strategy cards */
+.strat-header { background: var(--orange-light); border: 1px solid var(--orange-border); border-radius: 8px; padding: 12px 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
+.strat-num { font-size: 28px; font-weight: 700; color: var(--orange); line-height: 1; }
+.strat-title { font-size: 16px; font-weight: 700; color: var(--text); }
+.formula { border: 1.5px dashed var(--orange-border); border-radius: 8px; padding: 12px; font-size: 13.5px; color: var(--text); line-height: 1.7; margin-bottom: 14px; }
+.formula strong { color: var(--orange-dark); font-weight: 700; }
+.step-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.step-item { display: flex; align-items: flex-start; gap: 10px; }
+.step-circle { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--orange); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--orange); flex-shrink: 0; margin-top: 2px; }
+.step-desc { font-size: 13px; color: var(--text); line-height: 1.6; flex: 1; }
+.trap-box { background: var(--red-light); border: 1px solid var(--red-border); border-radius: 8px; padding: 12px 14px; }
+.trap-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.trap-pill { background: var(--red); color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+.trap-items { display: flex; flex-direction: column; gap: 5px; }
+.trap-item { font-size: 13px; color: #7B1C1C; line-height: 1.5; padding-left: 12px; position: relative; }
+.trap-item::before { content: '·'; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+
+/* Strat picker */
+.strat-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.strat-tab { font-size: 12px; padding: 6px 13px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-muted); cursor: pointer; font-family: inherit; font-weight: 500; transition: all .12s; }
+.strat-tab.on { background: var(--orange); border-color: var(--orange); color: #fff; }
+
+/* Passage selector */
+.passage-tabs { display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 2px; }
+.passage-tabs::-webkit-scrollbar { display: none; }
+.ptab { font-size: 12px; padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-muted); cursor: pointer; white-space: nowrap; font-family: inherit; font-weight: 500; transition: all .12s; flex-shrink: 0; }
+.ptab.on { background: var(--orange); border-color: var(--orange); color: #fff; }
+
+/* Check complete button */
+.check-btn { width: 100%; padding: 14px; background: var(--orange); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; margin-top: 14px; transition: opacity .15s; }
+.check-btn:active { opacity: .85; }
+.reset-btn { width: 100%; padding: 12px; background: var(--surface); color: var(--text-muted); border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; font-weight: 500; font-family: inherit; cursor: pointer; margin-top: 8px; }
+
+/* Score ring */
+.score-ring { display: flex; justify-content: center; padding: 14px 0; }
+.ring-inner { text-align: center; }
+.ring-num { font-size: 36px; font-weight: 700; color: var(--orange); line-height: 1; }
+.ring-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+/* Divider */
+.divider { height: 1px; background: var(--border); margin: 14px 0; }
+
+/* Section header */
+.sec-hd { font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: .06em; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="topbar-logo">주니쌤 편입영어</div>
+    <div class="topbar-title" id="topbar-title">문장 역할 훈련</div>
+  </div>
+
+  <div class="content">
+
+    <!-- ① 문장 역할 훈련 -->
+    <div class="screen on" id="s-tag">
+      <div class="passage-tabs" id="ptabs"><button class="ptab on">지문 1</button><button class="ptab">지문 2</button><button class="ptab">지문 3</button></div>
+      <div id="tag-content">
+    <div class="card">
+      <div class="card-label">읽기 훈련 01</div>
+      <div class="card-title">문장 역할 태그 달기</div>
+      <div class="card-sub" style="margin-bottom:12px;">각 문장이 글에서 어떤 역할을 하는지 선택하세요.</div>
+      <div class="tip"><strong>힌트:</strong> 전환어(however, rather, therefore)를 먼저 찾고 방향이 바뀌는 지점을 체크하세요.</div>
+      <div class="progress-text" id="ptxt">선택 0 / 5</div>
+      <div class="progress-bar"><div class="progress-fill" id="pfill" style="width:0%"></div></div>
+      <div class="tag-section"><div class="tag-row" id="row-0">
+      <div class="tag-sent"><span class="snum">1</span>Recently, automation has reshaped the nature of work in fundamental ways.</div>
+      <div class="tag-chips" id="chips-0">
+        <button class="chip" onclick="selectTag(0,&#39;소재 도입&#39;,this)">소재 도입</button><button class="chip" onclick="selectTag(0,&#39;전환/반박&#39;,this)">전환/반박</button><button class="chip" onclick="selectTag(0,&#39;주장&#39;,this)">주장</button><button class="chip" onclick="selectTag(0,&#39;예시&#39;,this)">예시</button><button class="chip" onclick="selectTag(0,&#39;결론&#39;,this)">결론</button>
+      </div>
+    </div><div class="tag-row" id="row-1">
+      <div class="tag-sent"><span class="snum">2</span>This shift, however, is not simply a story of job loss.</div>
+      <div class="tag-chips" id="chips-1">
+        <button class="chip" onclick="selectTag(1,&#39;소재 도입&#39;,this)">소재 도입</button><button class="chip" onclick="selectTag(1,&#39;전환/반박&#39;,this)">전환/반박</button><button class="chip" onclick="selectTag(1,&#39;주장&#39;,this)">주장</button><button class="chip" onclick="selectTag(1,&#39;예시&#39;,this)">예시</button><button class="chip" onclick="selectTag(1,&#39;결론&#39;,this)">결론</button>
+      </div>
+    </div><div class="tag-row" id="row-2">
+      <div class="tag-sent"><span class="snum">3</span>Rather, it represents a redefinition of human labor itself.</div>
+      <div class="tag-chips" id="chips-2">
+        <button class="chip" onclick="selectTag(2,&#39;소재 도입&#39;,this)">소재 도입</button><button class="chip" onclick="selectTag(2,&#39;전환/반박&#39;,this)">전환/반박</button><button class="chip" onclick="selectTag(2,&#39;주장&#39;,this)">주장</button><button class="chip" onclick="selectTag(2,&#39;예시&#39;,this)">예시</button><button class="chip" onclick="selectTag(2,&#39;결론&#39;,this)">결론</button>
+      </div>
+    </div><div class="tag-row" id="row-3">
+      <div class="tag-sent"><span class="snum">4</span>For example, workers who once performed repetitive tasks are now expected to manage and interpret machine outputs.</div>
+      <div class="tag-chips" id="chips-3">
+        <button class="chip" onclick="selectTag(3,&#39;소재 도입&#39;,this)">소재 도입</button><button class="chip" onclick="selectTag(3,&#39;전환/반박&#39;,this)">전환/반박</button><button class="chip" onclick="selectTag(3,&#39;주장&#39;,this)">주장</button><button class="chip" onclick="selectTag(3,&#39;예시&#39;,this)">예시</button><button class="chip" onclick="selectTag(3,&#39;결론&#39;,this)">결론</button>
+      </div>
+    </div><div class="tag-row" id="row-4">
+      <div class="tag-sent"><span class="snum">5</span>Therefore, the key challenge is not eliminating jobs, but transforming the skills workers need to thrive.</div>
+      <div class="tag-chips" id="chips-4">
+        <button class="chip" onclick="selectTag(4,&#39;소재 도입&#39;,this)">소재 도입</button><button class="chip" onclick="selectTag(4,&#39;전환/반박&#39;,this)">전환/반박</button><button class="chip" onclick="selectTag(4,&#39;주장&#39;,this)">주장</button><button class="chip" onclick="selectTag(4,&#39;예시&#39;,this)">예시</button><button class="chip" onclick="selectTag(4,&#39;결론&#39;,this)">결론</button>
+      </div>
+    </div></div>
+      <button class="check-btn" onclick="checkTags()">채점하기</button>
+      <button class="reset-btn" onclick="loadPassage(0)">다시 풀기</button>
+      <div class="feedback" id="tag-fb"></div>
+    </div></div>
+    </div>
+
+    <!-- ② 지문 구조 맵 -->
+    <div class="screen" id="s-map">
+      <div class="card">
+        <div class="card-label">읽기 훈련 02</div>
+        <div class="card-title">지문 구조 맵</div>
+        <div class="card-sub" style="margin-bottom:14px;">지문을 읽으면서 아래 항목을 직접 채워보세요.</div>
+        <div class="tip"><strong>연습 지문:</strong> Recently, automation has reshaped the nature of work in fundamental ways. This shift, however, is not simply a story of job loss. Rather, it represents a redefinition of human labor itself. For example, workers who once performed repetitive tasks are now expected to manage machine outputs. Therefore, the key challenge is transforming the skills workers need to thrive.</div>
+        <div class="map-grid">
+          <div class="map-field">
+            <label>① 핵심 소재</label>
+            <input class="map-input" placeholder="첫 문장에서...">
+          </div>
+          <div class="map-field">
+            <label>② 전환 표현</label>
+            <input class="map-input" placeholder="e.g. however">
+          </div>
+          <div class="map-field">
+            <label>③ 글쓴이 방향</label>
+            <input class="map-input" placeholder="긍정/부정/제안">
+          </div>
+          <div class="map-field">
+            <label>④ 마지막 결론</label>
+            <input class="map-input" placeholder="핵심 한 줄">
+          </div>
+        </div>
+        <div class="map-field">
+          <label>⑤ 전개 패턴 선택</label>
+          <div class="pattern-chips" id="pchips"><div class="pattern-chip">통념→반박→주장</div><div class="pattern-chip">문제→해결</div><div class="pattern-chip">주장→근거→예시</div><div class="pattern-chip">현상→원인→결과</div><div class="pattern-chip">비교→차이점→결론</div></div>
+        </div>
+        <button class="check-btn" onclick="checkMap()">답 확인하기</button>
+        <div class="feedback" id="map-fb"></div>
+      </div>
+
+      <div class="card">
+        <div class="sec-hd">흐름 시각화</div>
+        <div class="flow">
+          <div class="flow-step">
+            <div class="flow-dot">①</div>
+            <div class="flow-content">
+              <div><span class="flow-badge badge-main">소재 도입</span></div>
+              <div class="flow-text">Recently, automation has reshaped...</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-dot">②</div>
+            <div class="flow-content">
+              <div><span class="flow-badge badge-sub">전환</span></div>
+              <div class="flow-text">This shift, <em>however</em>, is not simply...</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-dot">③</div>
+            <div class="flow-content">
+              <div><span class="flow-badge badge-main">주장</span></div>
+              <div class="flow-text"><em>Rather</em>, it represents a redefinition...</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-dot">④</div>
+            <div class="flow-content">
+              <div><span class="flow-badge badge-ex">예시</span></div>
+              <div class="flow-text"><em>For example</em>, workers who once...</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-dot">⑤</div>
+            <div class="flow-content">
+              <div><span class="flow-badge badge-concl">결론</span></div>
+              <div class="flow-text"><em>Therefore</em>, the key challenge is...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ 전략 카드 -->
+    <div class="screen" id="s-strat">
+      <div class="strat-tabs" id="strat-tabs"><button class="strat-tab on">01 주제 / 제목</button><button class="strat-tab">05 빈칸 추론</button><button class="strat-tab">07 흐름 무관 문장</button><button class="strat-tab">08 글의 순서</button><button class="strat-tab">09 문장 삽입</button></div>
+      <div id="strat-content">
+    <div class="card">
+      <div class="strat-header">
+        <div class="strat-num">01</div>
+        <div class="strat-title">주제 / 제목</div>
+      </div>
+      <div class="sec-hd" style="margin-bottom:6px;">한 줄 공식</div>
+      <div class="formula"><strong>반복 소재 + 글쓴이 방향 = 주제</strong></div>
+      <div class="sec-hd" style="margin-bottom:8px;">실전 접근 순서</div>
+      <div class="step-list">
+        
+          <div class="step-item">
+            <div class="step-circle">1</div>
+            <div class="step-desc">main topic / best title 표현 확인</div>
+          </div>
+          <div class="step-item">
+            <div class="step-circle">2</div>
+            <div class="step-desc">첫 문장에서 소재 잡기</div>
+          </div>
+          <div class="step-item">
+            <div class="step-circle">3</div>
+            <div class="step-desc">however 이후 방향 전환 체크</div>
+          </div>
+          <div class="step-item">
+            <div class="step-circle">4</div>
+            <div class="step-desc">마지막 문장 결론 확인</div>
+          </div>
+          <div class="step-item">
+            <div class="step-circle">5</div>
+            <div class="step-desc">선지: '소재+방향' 있는 것 선택</div>
+          </div>
+      </div>
+      <div class="trap-box">
+        <div class="trap-head">
+          <span class="trap-pill">TRAP</span>
+          <span style="font-size:12px;color:#7B1C1C;font-weight:700;">자주 나오는 오답 패턴</span>
+        </div>
+        <div class="trap-items">
+          <div class="trap-item">너무 넓은 선지 (전체 분야 제시)</div><div class="trap-item">예시 하나를 주제로 제시한 선지</div><div class="trap-item">소재는 맞지만 방향이 없는 선지</div>
+        </div>
+      </div>
+    </div></div>
+    </div>
+
+  </div>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <button class="nav-btn on" onclick="goScreen(&#39;s-tag&#39;,0,this,&#39;문장 역할 훈련&#39;)">
+      <svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+      역할 훈련
+    </button>
+    <button class="nav-btn" onclick="goScreen(&#39;s-map&#39;,1,this,&#39;지문 구조 맵&#39;)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18M9 21V9"></path></svg>
+      구조 맵
+    </button>
+    <button class="nav-btn" onclick="goScreen(&#39;s-strat&#39;,2,this,&#39;전략 카드&#39;)">
+      <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"></path></svg>
+      전략 카드
+    </button>
+  </nav>
+</div>
+
+<script>
+// ─── Data ─────────────────────────────────────────────────────────────────────
+
+const passages = [
+  {
+    label: "지문 1",
+    text: [
+      "Recently, automation has reshaped the nature of work in fundamental ways.",
+      "This shift, however, is not simply a story of job loss.",
+      "Rather, it represents a redefinition of human labor itself.",
+      "For example, workers who once performed repetitive tasks are now expected to manage and interpret machine outputs.",
+      "Therefore, the key challenge is not eliminating jobs, but transforming the skills workers need to thrive."
+    ],
+    roles: ["소재 도입","전환/반박","주장","예시","결론"],
+    tip: "전환어(however, rather, therefore)를 먼저 찾고 방향이 바뀌는 지점을 체크하세요."
+  },
+  {
+    label: "지문 2",
+    text: [
+      "Many people believe that multitasking increases productivity.",
+      "However, research consistently shows the opposite to be true.",
+      "The human brain is not designed to focus on two cognitively demanding tasks simultaneously.",
+      "For instance, drivers who talk on the phone show reaction times comparable to drunk drivers.",
+      "Thus, concentrating on one task at a time is far more effective than dividing attention."
+    ],
+    roles: ["통념 제시","전환/반박","근거","예시","결론"],
+    tip: "첫 문장의 'Many people believe'는 글쓴이 의견이 아니에요. however 뒤가 글쓴이의 진짜 입장이에요."
+  },
+  {
+    label: "지문 3",
+    text: [
+      "Urban green spaces have been steadily disappearing as cities expand.",
+      "This trend poses serious risks to both human health and biodiversity.",
+      "Studies show that access to parks reduces stress and improves mental well-being.",
+      "Moreover, urban forests filter air pollutants and regulate temperature.",
+      "Therefore, city planners must prioritize green infrastructure as an essential public resource."
+    ],
+    roles: ["문제 제기","위험성 강조","근거 1","근거 2","결론/제안"],
+    tip: "문제 제기 → 근거 → 결론/제안 구조예요. Therefore 앞에 근거가 충분히 쌓였는지 확인하세요."
+  }
+];
+
+const stratData = [
+  {
+    num:"01", title:"주제 / 제목",
+    formula:"반복 소재 + 글쓴이 방향 = 주제",
+    steps:[
+      "main topic / best title 표현 확인",
+      "첫 문장에서 소재 잡기",
+      "however 이후 방향 전환 체크",
+      "마지막 문장 결론 확인",
+      "선지: '소재+방향' 있는 것 선택"
+    ],
+    traps:["너무 넓은 선지 (전체 분야 제시)","예시 하나를 주제로 제시한 선지","소재는 맞지만 방향이 없는 선지"]
+  },
+  {
+    num:"05", title:"빈칸 추론",
+    formula:"앞뒤 논리 관계 예측 → 선지 대입",
+    steps:[
+      "빈칸 위치 파악 (첫/중간/끝)",
+      "앞 문장 방향 표시 (긍정/부정)",
+      "뒤 문장 기능 확인 (예시/결론?)",
+      "선지 보기 전 한국어로 예측",
+      "예측과 가장 가까운 선지 선택"
+    ],
+    traps:["방향은 맞지만 논리 관계 틀린 선지","뒤 예시를 포괄 못 하는 선지","전환어 무시한 선지"]
+  },
+  {
+    num:"07", title:"흐름 무관 문장",
+    formula:"주제어 체인이 끊기는 문장 = 정답",
+    steps:[
+      "각 문장 핵심어 한두 단어로 정리",
+      "주제어/대명사 체인 연결 확인",
+      "후보 문장 빼고 앞뒤 읽어보기",
+      "빠졌을 때 더 자연스러운 문장 선택",
+      "상식 아닌 '이 문단에 필요한지'로 판단"
+    ],
+    traps:["상식적으로 맞지만 문단에 불필요한 문장","단어는 비슷하지만 논점이 다른 문장","대명사 연결이 안 되는 문장"]
+  },
+  {
+    num:"08", title:"글의 순서",
+    formula:"선행사 → 대명사, 연결어로 쌍 만들기",
+    steps:[
+      "독립적으로 시작 가능한 첫 문장 찾기",
+      "첫 단어 연결어(However/Therefore) 확인",
+      "대명사 선행사 찾기",
+      "확실한 연결쌍 먼저 고정",
+      "전체 흐름 최종 검증"
+    ],
+    traps:["대명사 선행사 없는 위치","예시가 일반 진술보다 앞에 오는 순서","however 앞뒤가 대비 안 되는 순서"]
+  },
+  {
+    num:"09", title:"문장 삽입",
+    formula:"앞 조건 + 뒤 연결 동시에 맞는 유일한 위치",
+    steps:[
+      "주어진 문장 지시어/연결어 분석",
+      "앞 조건 설정 (선행사, 역접 등)",
+      "각 위치 앞-주어진-뒤 세트로 읽기",
+      "앞만 맞거나 뒤만 맞으면 오답",
+      "동시에 맞는 위치 선택"
+    ],
+    traps:["지시어 선행사 없는 위치","뒤 문장과 연결 안 되는 위치","문단 핵심 흐름 끊기는 위치"]
+  }
+];
+
+const patterns = ["통념→반박→주장","문제→해결","주장→근거→예시","현상→원인→결과","비교→차이점→결론"];
+
+// ─── State ────────────────────────────────────────────────────────────────────
+
+let curPassage = 0;
+let selTags = [];
+let checked = false;
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+
+function init() {
+  // Passage tabs
+  const ptabs = document.getElementById('ptabs');
+  passages.forEach((p, i) => {
+    const t = document.createElement('button');
+    t.className = 'ptab' + (i===0?' on':'');
+    t.textContent = p.label;
+    t.onclick = () => loadPassage(i);
+    ptabs.appendChild(t);
+  });
+
+  // Pattern chips
+  const pc = document.getElementById('pchips');
+  patterns.forEach(p => {
+    const c = document.createElement('div');
+    c.className = 'pattern-chip';
+    c.textContent = p;
+    c.onclick = () => {
+      pc.querySelectorAll('.pattern-chip').forEach(x => x.classList.remove('sel'));
+      c.classList.toggle('sel');
+    };
+    pc.appendChild(c);
+  });
+
+  // Strategy tabs
+  const st = document.getElementById('strat-tabs');
+  stratData.forEach((s, i) => {
+    const t = document.createElement('button');
+    t.className = 'strat-tab' + (i===0?' on':'');
+    t.textContent = s.num + ' ' + s.title;
+    t.onclick = () => loadStrat(i, t);
+    st.appendChild(t);
+  });
+
+  loadPassage(0);
+  loadStrat(0, document.querySelector('.strat-tab'));
+}
+
+// ─── Passage / Tag ────────────────────────────────────────────────────────────
+
+function loadPassage(idx) {
+  curPassage = idx;
+  checked = false;
+  selTags = new Array(passages[idx].text.length).fill(null);
+
+  document.querySelectorAll('.ptab').forEach((t,i) => t.classList.toggle('on', i===idx));
+
+  const p = passages[idx];
+  const roles = ["소재 도입","통념 제시","문제 제기","전환/반박","주장","근거","근거 1","근거 2","예시","결론","결론/제안","위험성 강조"];
+  const availRoles = [...new Set([...p.roles, "소재 도입","전환/반박","주장","예시","결론"])];
+
+  let html = `
+    <div class="card">
+      <div class="card-label">읽기 훈련 01</div>
+      <div class="card-title">문장 역할 태그 달기</div>
+      <div class="card-sub" style="margin-bottom:12px;">각 문장이 글에서 어떤 역할을 하는지 선택하세요.</div>
+      <div class="tip"><strong>힌트:</strong> ${p.tip}</div>
+      <div class="progress-text" id="ptxt">선택 0 / ${p.text.length}</div>
+      <div class="progress-bar"><div class="progress-fill" id="pfill" style="width:0%"></div></div>
+      <div class="tag-section">`;
+
+  p.text.forEach((sent, i) => {
+    html += `<div class="tag-row" id="row-${i}">
+      <div class="tag-sent"><span class="snum">${i+1}</span>${sent}</div>
+      <div class="tag-chips" id="chips-${i}">
+        ${availRoles.map(r => `<button class="chip" onclick="selectTag(${i},'${r}',this)">${r}</button>`).join('')}
+      </div>
+    </div>`;
+  });
+
+  html += `</div>
+      <button class="check-btn" onclick="checkTags()">채점하기</button>
+      <button class="reset-btn" onclick="loadPassage(${idx})">다시 풀기</button>
+      <div class="feedback" id="tag-fb"></div>
+    </div>`;
+
+  document.getElementById('tag-content').innerHTML = html;
+}
+
+function selectTag(rowIdx, role, btn) {
+  if (checked) return;
+  const chips = document.querySelectorAll(`#chips-${rowIdx} .chip`);
+  chips.forEach(c => c.classList.remove('sel'));
+  btn.classList.add('sel');
+  selTags[rowIdx] = role;
+  updateProgress();
+}
+
+function updateProgress() {
+  const done = selTags.filter(x => x !== null).length;
+  const total = passages[curPassage].text.length;
+  document.getElementById('ptxt').textContent = `선택 ${done} / ${total}`;
+  document.getElementById('pfill').style.width = (done/total*100) + '%';
+}
+
+function checkTags() {
+  const p = passages[curPassage];
+  const done = selTags.filter(x => x !== null).length;
+  if (done < p.text.length) {
+    const fb = document.getElementById('tag-fb');
+    fb.className = 'feedback ng';
+    fb.style.display = 'block';
+    fb.textContent = '모든 문장에 태그를 선택한 뒤 채점하세요.';
+    return;
+  }
+  checked = true;
+  let correct = 0;
+  const wrongs = [];
+  p.text.forEach((_, i) => {
+    const ans = p.roles[i];
+    const chips = document.querySelectorAll(`#chips-${i} .chip`);
+    chips.forEach(c => {
+      if (c.textContent === ans) c.classList.add('correct');
+      if (c.classList.contains('sel') && c.textContent !== ans) c.classList.add('wrong');
+    });
+    if (selTags[i] === ans) correct++;
+    else wrongs.push(`문장 ${i+1}: 정답은 <strong>${ans}</strong>`);
+  });
+
+  const fb = document.getElementById('tag-fb');
+  fb.style.display = 'block';
+  if (correct === p.text.length) {
+    fb.className = 'feedback ok';
+    fb.innerHTML = `✅ ${p.text.length}개 모두 정확하게 분류했어요! 전환어를 기준으로 흐름을 잘 잡았어요.`;
+  } else {
+    fb.className = 'feedback ng';
+    fb.innerHTML = `${correct}/${p.text.length} 정답<br><br>${wrongs.join('<br>')}`;
+  }
+  fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ─── Map ──────────────────────────────────────────────────────────────────────
+
+function checkMap() {
+  const inputs = document.querySelectorAll('.map-input');
+  const hasAny = [...inputs].some(i => i.value.trim().length > 0);
+  const fb = document.getElementById('map-fb');
+  fb.style.display = 'block';
+  if (!hasAny) {
+    fb.className = 'feedback ng';
+    fb.innerHTML = '항목을 하나 이상 채운 뒤 확인해보세요.';
+    return;
+  }
+  fb.className = 'feedback ok';
+  fb.innerHTML = `✅ 참고 답안:<br>
+    ① <strong>automation (자동화)</strong><br>
+    ② <strong>however</strong><br>
+    ③ <strong>기술 변화에 적응 필요 (긍정/제안)</strong><br>
+    ④ <strong>기술보다 인간 역량 재정의가 핵심</strong><br>
+    ⑤ 패턴: <strong>통념→반박→주장</strong>`;
+}
+
+// ─── Strategy ────────────────────────────────────────────────────────────────
+
+function loadStrat(idx, btn) {
+  document.querySelectorAll('.strat-tab').forEach(t => t.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  const s = stratData[idx];
+  document.getElementById('strat-content').innerHTML = `
+    <div class="card">
+      <div class="strat-header">
+        <div class="strat-num">${s.num}</div>
+        <div class="strat-title">${s.title}</div>
+      </div>
+      <div class="sec-hd" style="margin-bottom:6px;">한 줄 공식</div>
+      <div class="formula"><strong>${s.formula}</strong></div>
+      <div class="sec-hd" style="margin-bottom:8px;">실전 접근 순서</div>
+      <div class="step-list">
+        ${s.steps.map((st,i) => `
+          <div class="step-item">
+            <div class="step-circle">${i+1}</div>
+            <div class="step-desc">${st}</div>
+          </div>`).join('')}
+      </div>
+      <div class="trap-box">
+        <div class="trap-head">
+          <span class="trap-pill">TRAP</span>
+          <span style="font-size:12px;color:#7B1C1C;font-weight:700;">자주 나오는 오답 패턴</span>
+        </div>
+        <div class="trap-items">
+          ${s.traps.map(t => `<div class="trap-item">${t}</div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+// ─── Nav ──────────────────────────────────────────────────────────────────────
+
+function goScreen(id, idx, btn, title) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  btn.classList.add('on');
+  document.getElementById('topbar-title').textContent = title;
+  document.querySelector('.content').scrollTop = 0;
+}
+
+init();
+</script>
+
+
+</body></html>
